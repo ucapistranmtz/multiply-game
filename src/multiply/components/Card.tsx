@@ -16,6 +16,10 @@ export const Card = (multplication: {
   secondFactor: Number;
 }) => {
 
+  const checkMultiplication = async ( ) => {
+
+    console.log(event)
+  }
  
   return (
     <>
@@ -24,7 +28,7 @@ export const Card = (multplication: {
           <Bcard >
             <Bcard.Img variant="top" src="https://picsum.photos/200/100" />
             <Bcard.Body>
-              <Form>
+              <Form onSubmit={checkMultiplication}>
                 <Form.Group
                   className="mb-3"
                   controlId="exampleForm.ControlInput1"
