@@ -1,13 +1,13 @@
- 
-import { CardList } from '../components'
-
+import { CardList } from '../components';
+import { Timer } from '../components';
 export const MultiplyGamePage = () => {
-
- 
   return (
-   <>
-     <CardList  factor={2}/> 
-   </>
-  )
-
-}
+    <>
+      <div>
+        <h1>Let's play </h1>
+        <Timer durationInSeconds={180} />
+      </div>
+      <CardList />
+    </>
+  );
+};

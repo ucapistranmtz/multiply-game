@@ -1,40 +1,40 @@
-import { Card } from './Card'
-import { useMemo } from 'react';
-import  { Container,Row,Col} from 'react-bootstrap'
-import { randomNumbers} from '../../helpers'
-//a function returning an array  of 10 random non repeated numbers between 1 and 10 
+import React, { useState } from 'react';
+import { Container, Carousel } from 'react-bootstrap';
+import { CardForm } from './CardForm';
 
-export const CardList = ( props: { factor:Number}) => {
-    
- 
-    const factorMap = new Map<Number, Number>()
+interface Factor {
+  factor1: number;
+  factor2: number;
+}
 
-    const numbers:Number[] = [];
-    while (numbers.length < 10) {
-      const randomNumber:Number = Math.floor(Math.random() * 10) + 1;
-      if (!numbers.includes(randomNumber)) {
-        factorMap.set(randomNumber,props.factor) 
-        numbers.push(randomNumber);
-      }
-    } 
-    console.log(factorMap)
+export const CardList: React.FC = () => {
+  const factors: Factor[] = [
+    { factor1: 2, factor2: 0 },
+    { factor1: 3, factor2: 1 },
+    { factor1: 4, factor2: 2 },
+    // Add more factors as needed
+  ];
+
+  const [activeIndex, setActiveIndex] = useState<number>(0);
+
+  const handleFormSubmit = () => {
+    // Update the active index to move to the next question
+    setActiveIndex(prevIndex => (prevIndex + 1) % factors.length);
+  };
 
   return (
-    <>
-     <Container>
-
-        
-          {[...factorMap.entries()].map(([key,value]) => (
-            
-            <Card firstFactor={value} secondFactor={key} key={`${key}-${value}`}/>
-            
-          ))}
-        
-     </Container>
-  
-   
- 
-  
-    </>
-  )
-}
+    <Container>
+      <Carousel activeIndex={activeIndex} onSelect={() => {}}>
+        {factors.map((factor, index) => (
+          <Carousel.Item key={index}>
+            <CardForm
+              factor1={factor.factor1}
+              factor2={factor.factor2}
+              onSubmit={handleFormSubmit}
+            />
+          </Carousel.Item>
+        ))}
+      </Carousel>
+    </Container>
+  );
+};
