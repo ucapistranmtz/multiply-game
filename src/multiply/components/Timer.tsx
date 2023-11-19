@@ -2,9 +2,10 @@ import React, { useState, useEffect } from 'react';
 
 interface TimerProps {
   durationInSeconds: number;
+  onTimerEnds: () => void;
 }
 
-export const Timer: React.FC<TimerProps> = ({ durationInSeconds }) => {
+export const Timer: React.FC<TimerProps> = ({ durationInSeconds, onTimerEnds }) => {
   const [seconds, setSeconds] = useState(durationInSeconds);
 
   useEffect(() => {
@@ -14,7 +15,7 @@ export const Timer: React.FC<TimerProps> = ({ durationInSeconds }) => {
           return prevSeconds - 1;
         } else {
           clearInterval(intervalId);
-          handleTimeEnds();
+          onTimerEnds();
           return 0;
         }
       });
@@ -22,12 +23,7 @@ export const Timer: React.FC<TimerProps> = ({ durationInSeconds }) => {
 
     // Clear interval when the component unmounts
     return () => clearInterval(intervalId);
-  }, [durationInSeconds]);
-
-  const handleTimeEnds = () => {
-    // Display a popup message (you can replace this with a modal component)
-    alert('Time Ends');
-  };
+  }, [durationInSeconds, onTimerEnds]);
 
   return (
     <div>

@@ -9,11 +9,26 @@ export interface CardFormProps {
 
 export const CardForm: React.FC<CardFormProps> = ({ factor1, factor2, onSubmit }) => {
   const [userAnswer, setUserAnswer] = useState<string>('');
+  const [isCorrect, setIsCorrect] = useState<boolean | null>(null);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    // Check the answer or perform any other necessary action here
-    console.log('User answer:', userAnswer);
+    const correctAnswer = factor1 * factor2;
+    const userEnteredAnswer = parseInt(userAnswer, 10);
+    const isAnswerCorrect = !isNaN(userEnteredAnswer) && userEnteredAnswer === correctAnswer;
+
+    setIsCorrect(isAnswerCorrect);
+
+    // Save the result to localStorage
+    const result = {
+      factor1,
+      factor2,
+      userAnswer,
+      isCorrect: isAnswerCorrect,
+    };
+    const previousResults = JSON.parse(localStorage.getItem('results') || '[]');
+    localStorage.setItem('results', JSON.stringify([...previousResults, result]));
+
     // Trigger the parent component's onSubmit function to change the carousel
     onSubmit();
   };
@@ -38,6 +53,11 @@ export const CardForm: React.FC<CardFormProps> = ({ factor1, factor2, onSubmit }
             Submit
           </Button>
         </Form>
+        {isCorrect !== null && (
+          <p className={isCorrect ? 'text-success' : 'text-danger'}>
+            {isCorrect ? 'Correct! Well done!' : 'Incorrect. Try again.'}
+          </p>
+        )}
       </Card.Body>
     </Card>
   );
