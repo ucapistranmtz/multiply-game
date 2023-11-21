@@ -27,8 +27,15 @@ export const CardList: React.FC = () => {
     setActiveIndex(prevIndex => (prevIndex + 1) % factors.length);
   };
 
+  const [isTimerActive, setIsTimerActive] = useState<boolean>(false);
+
+  const handleTimerStartStop = (isActive: boolean) => {
+    setIsTimerActive(isActive);
+  };
+
   const handleTimerEnds = () => {
     setShowResults(true);
+    setIsTimerActive(false);
   };
 
   useEffect(() => {
@@ -41,7 +48,7 @@ export const CardList: React.FC = () => {
     <>
       <div>
         <h1>Let's play </h1>
-        <Timer durationInSeconds={180} onTimerEnds={handleTimerEnds} />
+        <Timer  initialMinutes={3} intervalDuration={180} onTimerEnds={handleTimerEnds}  onTimerStartStop={handleTimerStartStop}/>
       </div>
       <Container>
         <Carousel activeIndex={activeIndex} onSelect={() => {}}>
@@ -51,6 +58,7 @@ export const CardList: React.FC = () => {
                 factor1={factor.factor1}
                 factor2={factor.factor2}
                 onSubmit={handleFormSubmit}
+                isActive= { isTimerActive }
               />
             </Carousel.Item>
           ))}

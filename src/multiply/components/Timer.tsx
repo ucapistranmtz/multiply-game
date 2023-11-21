@@ -1,37 +1,60 @@
+// Timer.tsx
 import React, { useState, useEffect } from 'react';
 
 interface TimerProps {
-  durationInSeconds: number;
+  intervalDuration: number;
+  initialMinutes: number;
   onTimerEnds: () => void;
+  onTimerStartStop: (isActive: boolean) => void; // Callback for timer start/stop
 }
 
-export const Timer: React.FC<TimerProps> = ({ durationInSeconds, onTimerEnds }) => {
-  const [seconds, setSeconds] = useState(durationInSeconds);
+export const Timer: React.FC<TimerProps> = ({ intervalDuration, initialMinutes, onTimerEnds, onTimerStartStop }) => {
+  const initialSeconds: number = initialMinutes * 60;
+  const [totalSeconds, setTotalSeconds] = useState<number>(initialSeconds);
+  const [isActive, setIsActive] = useState<boolean>(false);
 
   useEffect(() => {
-    const intervalId = setInterval(() => {
-      setSeconds(prevSeconds => {
-        if (prevSeconds > 0) {
-          return prevSeconds - 1;
-        } else {
-          clearInterval(intervalId);
-          onTimerEnds();
-          return 0;
-        }
-      });
-    }, 1000);
+    let interval:any;
 
-    // Clear interval when the component unmounts
-    return () => clearInterval(intervalId);
-  }, [durationInSeconds, onTimerEnds]);
+    if (isActive && totalSeconds > 0) {
+      interval = setInterval(() => {
+        setTotalSeconds((prevSeconds) => prevSeconds - 1);
+      }, intervalDuration);
+    } else if (totalSeconds === 0) {
+      setIsActive(false);
+      clearInterval(interval!);
+      onTimerEnds(); // Call the callback when the timer ends
+    } else {
+      clearInterval(interval!);
+    }
+
+    return () => {
+      clearInterval(interval!);
+    };
+  }, [isActive, totalSeconds, intervalDuration, onTimerEnds]);
+
+  const handleStartStop = () => {
+    setIsActive(!isActive);
+    onTimerStartStop(!isActive);
+  };
+
+  const handleReset = () => {
+    setTotalSeconds(initialSeconds);
+    setIsActive(false);
+    onTimerStartStop(false);
+  };
+
+  const formatTime = (time: number): string => {
+    const minutes: number = Math.floor(time / 60);
+    const seconds: number = time % 60;
+    return `${minutes}:${seconds < 10 ? '0' : ''}${seconds}`;
+  };
 
   return (
     <div>
-      {seconds > 0 ? (
-        <p>
-          Time left: {Math.floor(seconds / 60)}:{seconds % 60}
-        </p>
-      ) : null}
+      <h1>Timer: {formatTime(totalSeconds)}</h1>
+      <button onClick={handleStartStop}>{isActive ? 'Pause' : 'Start'}</button>
+      <button onClick={handleReset}>Reset</button>
     </div>
   );
-};
+}; 

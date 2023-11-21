@@ -5,9 +5,10 @@ export interface CardFormProps {
   factor1: number;
   factor2: number;
   onSubmit: () => void;
+  isActive: boolean;
 }
 
-export const CardForm: React.FC<CardFormProps> = ({ factor1, factor2, onSubmit }) => {
+export const CardForm: React.FC<CardFormProps> = ({ factor1, factor2, onSubmit,isActive }) => {
   const [userAnswer, setUserAnswer] = useState<string>('');
   const [isCorrect, setIsCorrect] = useState<boolean | null>(null);
 
@@ -49,7 +50,7 @@ export const CardForm: React.FC<CardFormProps> = ({ factor1, factor2, onSubmit }
               onChange={e => setUserAnswer(e.target.value)}
             />
           </Form.Group>
-          <Button variant='primary' type='submit'>
+          <Button variant='primary' type='submit' disabled={!isActive}>
             Submit
           </Button>
         </Form>
