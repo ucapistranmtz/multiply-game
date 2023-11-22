@@ -17,7 +17,7 @@ interface Result {
 
 export const CardList: React.FC = () => {
   const factors: Factor[] = generateRandomFactors(4);
-  console.log(factors);
+   
   const [activeIndex, setActiveIndex] = useState<number>(0);
   const [results, setResults] = useState<Result[]>([]);
   const [showResults, setShowResults] = useState<boolean>(false);
@@ -31,6 +31,9 @@ export const CardList: React.FC = () => {
 
   const handleTimerStartStop = (isActive: boolean) => {
     setIsTimerActive(isActive);
+    localStorage.clear()
+    setResults([])
+   
   };
 
   const handleTimerEnds = () => {
@@ -41,6 +44,7 @@ export const CardList: React.FC = () => {
   useEffect(() => {
     // Retrieve results from localStorage when the component mounts
     const storedResults = JSON.parse(localStorage.getItem('results') || '[]');
+    console.log('storedResults',storedResults);
     setResults(storedResults);
   }, []);
 
@@ -48,7 +52,7 @@ export const CardList: React.FC = () => {
     <>
       <div>
         <h1>Let's play </h1>
-        <Timer  initialMinutes={3} intervalDuration={180} onTimerEnds={handleTimerEnds}  onTimerStartStop={handleTimerStartStop}/>
+        <Timer  initialMinutes={3} intervalDuration={1800} onTimerEnds={handleTimerEnds}  onTimerStartStop={handleTimerStartStop}/>
       </div>
       <Container>
         <Carousel activeIndex={activeIndex} onSelect={() => {}}>
@@ -68,6 +72,9 @@ export const CardList: React.FC = () => {
             <Col>
               <Alert variant='info'>
                 <h3>Results</h3>
+                 <h3> Great you solved {results.length} operations</h3>
+                 <h4>{results.filter(result=> result.isCorrect).length} where correct</h4>
+                 <h4>{results.filter(result=> !result.isCorrect).length} where incorrect</h4>
                 {results.map((result, index) => (
                   <p key={index}>
                     {result.factor1} * {result.factor2} = {result.userAnswer} -{' '}
