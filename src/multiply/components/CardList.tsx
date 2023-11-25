@@ -14,10 +14,16 @@ interface Result {
   userAnswer: string;
   isCorrect: boolean;
 }
-
-export const CardList: React.FC = () => {
-  const factors: Factor[] = generateRandomFactors(4);
-   
+type CardListProps = {
+  factor: number;
+};
+export const CardList: React.FC<CardListProps> = ({ factor }) => {
+  let factors: Factor[] = generateRandomFactors(factor);
+  for (let index = 1; index <= (factor - 2 > 0 ? factor - 2 : factor + 2); index++) {
+    let newFactor: Factor[] = generateRandomFactors(factor - index);
+    newFactor = newFactor.slice(0, newFactor.length - 2);
+    factors = factors.concat([...newFactor]);
+  }
   const [activeIndex, setActiveIndex] = useState<number>(0);
   const [results, setResults] = useState<Result[]>([]);
   const [showResults, setShowResults] = useState<boolean>(false);
@@ -31,20 +37,22 @@ export const CardList: React.FC = () => {
 
   const handleTimerStartStop = (isActive: boolean) => {
     setIsTimerActive(isActive);
-    localStorage.clear()
-    setResults([])
-   
+    localStorage.clear();
+    setResults([]);
   };
 
   const handleTimerEnds = () => {
     setShowResults(true);
+    const storedResults = JSON.parse(localStorage.getItem('results') || '[]');
+
+    console.log('handleTimerEnds', storedResults);
     setIsTimerActive(false);
   };
 
   useEffect(() => {
     // Retrieve results from localStorage when the component mounts
     const storedResults = JSON.parse(localStorage.getItem('results') || '[]');
-    console.log('storedResults',storedResults);
+    console.log('storedResults', storedResults);
     setResults(storedResults);
   }, []);
 
@@ -52,7 +60,12 @@ export const CardList: React.FC = () => {
     <>
       <div>
         <h1>Let's play </h1>
-        <Timer  initialMinutes={3} intervalDuration={1800} onTimerEnds={handleTimerEnds}  onTimerStartStop={handleTimerStartStop}/>
+        <Timer
+          initialMinutes={3}
+          intervalDuration={1800}
+          onTimerEnds={handleTimerEnds}
+          onTimerStartStop={handleTimerStartStop}
+        />
       </div>
       <Container>
         <Carousel activeIndex={activeIndex} onSelect={() => {}}>
@@ -62,7 +75,7 @@ export const CardList: React.FC = () => {
                 factor1={factor.factor1}
                 factor2={factor.factor2}
                 onSubmit={handleFormSubmit}
-                isActive= { isTimerActive }
+                isActive={isTimerActive}
               />
             </Carousel.Item>
           ))}
@@ -72,9 +85,9 @@ export const CardList: React.FC = () => {
             <Col>
               <Alert variant='info'>
                 <h3>Results</h3>
-                 <h3> Great you solved {results.length} operations</h3>
-                 <h4>{results.filter(result=> result.isCorrect).length} where correct</h4>
-                 <h4>{results.filter(result=> !result.isCorrect).length} where incorrect</h4>
+                <h3> Great you solved {results.length} operations</h3>
+                <h4>{results.filter(result => result.isCorrect).length} where correct</h4>
+                <h4>{results.filter(result => !result.isCorrect).length} where incorrect</h4>
                 {results.map((result, index) => (
                   <p key={index}>
                     {result.factor1} * {result.factor2} = {result.userAnswer} -{' '}

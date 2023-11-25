@@ -8,7 +8,7 @@ export interface CardFormProps {
   isActive: boolean;
 }
 
-export const CardForm: React.FC<CardFormProps> = ({ factor1, factor2, onSubmit,isActive }) => {
+export const CardForm: React.FC<CardFormProps> = ({ factor1, factor2, onSubmit, isActive }) => {
   const [userAnswer, setUserAnswer] = useState<string>('');
   const [isCorrect, setIsCorrect] = useState<boolean | null>(null);
 
@@ -28,8 +28,10 @@ export const CardForm: React.FC<CardFormProps> = ({ factor1, factor2, onSubmit,i
       isCorrect: isAnswerCorrect,
     };
     const previousResults = JSON.parse(localStorage.getItem('results') || '[]');
-    localStorage.setItem('results', JSON.stringify([...previousResults, result]));
-
+    //only 26 results are allowed to be stored in local storage
+    if (previousResults.length <= 26) {
+      localStorage.setItem('results', JSON.stringify([...previousResults, result]));
+    }
     // Trigger the parent component's onSubmit function to change the carousel
     onSubmit();
   };

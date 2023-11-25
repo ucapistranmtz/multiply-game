@@ -14,6 +14,7 @@ interface ResultsDisplayProps {
 }
 
 export const ResultsDisplay: React.FC<ResultsDisplayProps> = ({ results }) => {
+  // console.log('ResultsDisplay', results);
   return (
     <Alert variant='info'>
       <h3>Incorrect Results</h3>
